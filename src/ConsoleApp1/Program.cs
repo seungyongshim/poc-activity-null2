@@ -1,4 +1,12 @@
 using System.Diagnostics;
+using Boost.Proto.Actor.DependencyInjection;
+using Boost.Proto.Actor.Hosting.Cluster;
+using Boost.Proto.Actor.Hosting.OpenTelemetry;
+using ConsoleApp1.Actor;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Proto;
+using Proto.Cluster;
 
 using var listener = new ActivityListener
 {
@@ -9,14 +17,39 @@ using var listener = new ActivityListener
 };
 
 ActivitySource.AddActivityListener(listener);
-var activitySource = new ActivitySource("what?!");
 
-await SomeAsyncOperation(activitySource);
+var host = Host.CreateDefaultBuilder()
+               .ConfigureServices(services =>
+               {
 
-Console.WriteLine(Activity.Current?.ToString() ?? "Activity Current is null!!");
+               })
+               .UseProtoActorCluster((option, sp) =>
+               {
+                   option.Name = "poc";
+                   option.SystemShutdownDelaySec = 0;
+                   option.ClusterKinds.Add(new
+                   (
+                       nameof(HelloGrainActor),
+                       sp.GetRequiredService<IPropsFactory<HelloGrainActor>>().Create()
+                   ));
 
-static async Task<Activity?> SomeAsyncOperation(ActivitySource src)
-{
-    await Task.Delay(1).ConfigureAwait(true);
-    return src.StartActivity("example");
-}
+                   option.FuncActorSystemStart = root =>
+                   {
+                       root.SpawnNamed(sp.GetRequiredService<IPropsFactory<EchoActor>>().Create(),
+                                       nameof(EchoActor));
+                       return root;
+                   };
+               })
+               .UseProtoActorOpenTelemetry()
+               .Build();
+
+await host.StartAsync();
+
+var root = host.Services.GetRequiredService<IRootContext>();
+
+using var cts = new CancellationTokenSource();
+var x = root.System.Cluster().RequestAsync<string>("1", nameof(HelloGrainActor), "Hello", root, cts.Token);
+
+
+await host.WaitForShutdownAsync();
+
