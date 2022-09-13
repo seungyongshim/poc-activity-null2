@@ -5,6 +5,7 @@ using Boost.Proto.Actor.Hosting.OpenTelemetry;
 using ConsoleApp1.Actor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Context.Propagation;
 using Proto;
 using Proto.Cluster;
 
@@ -44,6 +45,8 @@ var host = Host.CreateDefaultBuilder()
                .Build();
 
 await host.StartAsync();
+
+_ = OpenTelemetry.Sdk.SuppressInstrumentation;
 
 var root = host.Services.GetRequiredService<IRootContext>();
 
