@@ -35,12 +35,18 @@ public static class Actor<RT> where RT : struct, HasActorInternal<RT>
         select _1;
 
     public static Aff<RT, T> RequestAff<T>(PID target, object msg) =>
+        from __ in unitEff
         from obj in RequestAff(target, msg)
         select (T)obj;
 
     public static Aff<RT, object> RequestAff(PID target, object msg) =>
         from ct in cancelToken<RT>()
         from actor in default(RT).ActorEff
+        from __ in Eff<RT, Unit>(rt =>
+        {
+            Console.WriteLine($"3:{Activity.Current?.TraceId}");
+            return unit;
+        })
         from _1 in actor.RequestAsync(target, msg, ct)
                         .ToAsync()
                         .ToAff(e => Error.New(e.Reason ?? ""))

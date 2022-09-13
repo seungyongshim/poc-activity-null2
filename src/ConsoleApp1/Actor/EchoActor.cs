@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,5 +10,8 @@ namespace ConsoleApp1.Actor;
 
 public class EchoActor : IActor
 {
-    public Task ReceiveAsync(IContext context) => throw new NotImplementedException();
+    public async Task ReceiveAsync(IContext context) 
+    {
+        Console.WriteLine($"9:{Activity.Current?.TraceId}");
+    }
 }

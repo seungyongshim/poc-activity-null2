@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using ConsoleApp1.Effect;
 using LanguageExt;
 using Proto;
@@ -27,7 +28,10 @@ public readonly record struct ActorInternalIO(IContext Context)
 
     public async Task<Either<Fail, object>> RequestAsync(PID target, object message, CancellationToken ct)
     {
+        Console.WriteLine($"4:{Activity.Current?.TraceId}");
         var ret = await Context.RequestAsync<object?>(target, message, ct);
+
+        Console.WriteLine($"6:{Activity.Current?.TraceId}");
 
         return ret switch
         {
