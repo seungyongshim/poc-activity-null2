@@ -9,7 +9,7 @@ namespace ConsoleApp1.Effect;
 
 public static class Actor<RT> where RT : struct, HasActorInternal<RT>
 {
-    public static Aff<RT, T> MessageMatch<T>(Func<object?, Aff<RT, T>> match) =>
+    public static Aff<RT, T> MessageMatchAff<T>(Func<object?, Aff<RT, T>> match) =>
         from actor in default(RT).ActorEff
         from _1 in match(actor.Context.Message)
         select _1;
@@ -33,6 +33,15 @@ public static class Actor<RT> where RT : struct, HasActorInternal<RT>
         from _1 in RespondIfFailAff(aff)
         from _2 in RespondEff(_1)
         select _1;
+
+    public static Aff<RT, Unit> ForwardEff(PID target) =>
+        from actor in default(RT).ActorEff
+        from _1 in Eff<RT, Unit>(rt =>
+        {
+            actor.Context.Forward(target);
+            return unit;
+        })
+        select unit;
 
     public static Aff<RT, T> RequestAff<T>(PID target, object msg) =>
         from __ in unitEff

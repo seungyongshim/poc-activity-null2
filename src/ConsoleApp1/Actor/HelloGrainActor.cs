@@ -10,6 +10,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
 using System.Diagnostics;
+using k8s.KubeConfigModels;
 
 namespace ConsoleApp1.Actor;
 
@@ -17,24 +18,30 @@ public class HelloGrainActor : IActor
 {
     public async Task ReceiveAsync(IContext context)
     {
-        Console.WriteLine($"1:{Activity.Current?.TraceId}");
+        Console.WriteLine($"1:{Activity.Current?.TraceId}:{context.Message.GetType()} ");
 
         var q = from ___ in unitEff
                 let pid = new PID("nonhost", nameof(EchoActor))
-                from __2 in Actor<RT>.MessageMatch<Unit>(msg => msg switch
+                from __2 in Actor<RT>.MessageMatchAff(msg => msg switch
                 {
                     string m => from _1 in unitEff
-                                from __ in Eff<RT, Unit>(rt =>
+                                from _4 in Actor<RT>.RespondEff("return")
+                                from __1 in Aff<RT, Unit>(rt =>
                                 {
                                     Console.WriteLine($"2:{Activity.Current?.TraceId}");
-                                    return unit;
+                                    return ValueTask.FromResult(unit);
                                 })
                                 from _2 in Actor<RT>.RequestAff<string>(pid, m)
-                                from _3 in Actor<RT>.RespondEff(_2)
+                                from _3 in ActorEx<RT>.RequestAff(pid, m, TimeSpan.FromSeconds(30))
+                                from __2 in Aff<RT, Unit>(rt =>
+                                {
+                                    Console.WriteLine($"2A:{Activity.Current?.TraceId}");
+                                    return ValueTask.FromResult(unit);
+                                })
                                 select unit,
                     _ => unitAff
                 })
-                
+
                 select unit;
 
         using var cts = new CancellationTokenSource();
@@ -44,9 +51,10 @@ public class HelloGrainActor : IActor
     public readonly record struct RT(IContext Context,
                                      CancellationTokenSource CancellationTokenSource) :
         HasActorInternal<RT>,
+        HasActorExternal<RT>,
         HasDefault<RT>
     {
-       
+        public IRootContext Root => Context.System.Root;
     }
 
 }

@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Boost.Proto.Actor.Hosting.Cluster" Version="1.0.0-rc2.31.550" />
     <PackageReference Include="Boost.Proto.Actor.Hosting.Logging" Version="1.0.0-rc2.31.550" />
     <PackageReference Include="LanguageExt.Core" Version="4.3.2-beta" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
@@ -16,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Boost.Proto.Actor.Hosting.Cluster\Boost.Proto.Actor.Hosting.Cluster.csproj" />
     <ProjectReference Include="..\Boost.Proto.Actor.Hosting.OpenTelemetry\Boost.Proto.Actor.Hosting.OpenTelemetry.csproj" />
     <ProjectReference Include="..\Boost.Proto.Actor.Opentelemetry\Boost.Proto.Actor.Opentelemetry.csproj" />
   </ItemGroup>

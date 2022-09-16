@@ -10,8 +10,14 @@ namespace ConsoleApp1.Actor;
 
 public class EchoActor : IActor
 {
-    public async Task ReceiveAsync(IContext context) 
+    public Task ReceiveAsync(IContext context) => context.Message switch
     {
-        Console.WriteLine($"9:{Activity.Current?.TraceId}");
-    }
+        string m => Task.Run(() =>
+        {
+            context.Respond("world");
+            Console.WriteLine($"9:{Activity.Current?.TraceId}");
+            return Task.CompletedTask;
+        }),
+        _ => Task.CompletedTask,
+    };
 }

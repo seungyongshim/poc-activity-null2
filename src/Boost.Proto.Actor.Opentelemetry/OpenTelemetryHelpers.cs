@@ -27,13 +27,8 @@ namespace Boost.Proto.Actor.Opentelemetry
             ActivityKind activityKind = ActivityKind.Internal
         )
         {
-            if (message is IIgnoredTraceMessage
-                        or InfrastructureMessage
-                        or ClusterInit
-                        or GossipResponse
-                        or ActivationResponse)
+            if (parent.TraceId.ToString() == "00000000000000000000000000000000")
             {
-                Activity.Current = null;
                 return null;
             }
 
@@ -60,7 +55,7 @@ namespace Boost.Proto.Actor.Opentelemetry
 
         public static PropagationContext ExtractPropagationContext(this MessageHeader headers)
             => Propagators.DefaultTextMapPropagator.Extract(default, headers.ToDictionary(),
-                (dictionary, key) => dictionary.TryGetValue(key, out var value) ? new[] { value } : Array.Empty<string>()
+                (dictionary, key) => dictionary.TryGetValue(key, out var value) ? new[] { value } : default
             );
 
         private static void AddHeader(List<KeyValuePair<string, string>> list, string key, string value)

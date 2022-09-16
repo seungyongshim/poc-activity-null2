@@ -10,5 +10,5 @@ namespace Aums.Effect.Actor;
 public interface HasActorInternal<RT> : HasCancel<RT> where RT : struct, HasActorInternal<RT>
 {
     Eff<RT, ActorInternalIO> ActorEff => Eff<RT, ActorInternalIO>(static rt => new ActorInternalIO(rt.Context));
-    protected IContext Context { get; }
+    public IContext Context { get; }
 }

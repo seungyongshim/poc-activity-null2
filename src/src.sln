@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boost.Proto.Actor.Hosting.O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boost.Proto.Actor.Opentelemetry", "Boost.Proto.Actor.Opentelemetry\Boost.Proto.Actor.Opentelemetry.csproj", "{E63173E6-5CEA-46A9-8001-3C9FE95F0E49}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boost.Proto.Actor.DependencyInjection", "Boost.Proto.Actor.DependencyInjection\Boost.Proto.Actor.DependencyInjection.csproj", "{98D03F31-B0F5-4149-BCA1-E630D45FC9E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Boost.Proto.Actor.Hosting.Cluster", "Boost.Proto.Actor.Hosting.Cluster\Boost.Proto.Actor.Hosting.Cluster.csproj", "{C8399D8F-8C04-464F-9D27-F9FE918F57A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{E63173E6-5CEA-46A9-8001-3C9FE95F0E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E63173E6-5CEA-46A9-8001-3C9FE95F0E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E63173E6-5CEA-46A9-8001-3C9FE95F0E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98D03F31-B0F5-4149-BCA1-E630D45FC9E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98D03F31-B0F5-4149-BCA1-E630D45FC9E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98D03F31-B0F5-4149-BCA1-E630D45FC9E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98D03F31-B0F5-4149-BCA1-E630D45FC9E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8399D8F-8C04-464F-9D27-F9FE918F57A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8399D8F-8C04-464F-9D27-F9FE918F57A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8399D8F-8C04-464F-9D27-F9FE918F57A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8399D8F-8C04-464F-9D27-F9FE918F57A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

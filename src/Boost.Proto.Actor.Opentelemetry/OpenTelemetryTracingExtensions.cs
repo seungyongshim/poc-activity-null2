@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using OpenTelemetry.Trace;
+using Proto.Cluster;
+using Proto.Mailbox;
 
 namespace Boost.Proto.Actor.Opentelemetry;
 
@@ -19,15 +21,25 @@ public static class OpenTelemetryTracingExtensions
     {
         sendActivitySetup ??= OpenTelemetryHelpers.DefaultSetupActivity!;
         receiveActivitySetup ??= OpenTelemetryHelpers.DefaultSetupActivity!;
-        return props
-            .WithContextDecorator(ctx => new OpenTelemetryActorContextDecorator(ctx, sendActivitySetup, receiveActivitySetup))
+
+
+        return props.WithMailbox(() => UnboundedOpenTelemetryMailbox.Create())
+               .WithContextDecorator(ctx =>
+            {
+                return new OpenTelemetryActorContextDecorator(ctx, sendActivitySetup, receiveActivitySetup);
+            })
+            .WithReceiverMiddleware(OpenTelemetryReceiverMiddleware)
             .WithSenderMiddleware(OpenTelemetrySenderMiddleware);
     }
 
-    public static Sender OpenTelemetrySenderMiddleware(Sender next)
-        => async (context, target, envelope) => {
+    private static Receiver OpenTelemetryReceiverMiddleware(Receiver next)
+        => async (context, envelope) =>
+        {
+            await next(context, envelope);
+        };
 
-            Console.WriteLine($"5:{Activity.Current?.TraceId}");
+    private static Sender OpenTelemetrySenderMiddleware(Sender next)
+        => async (context, target, envelope) => {
             var activity = Activity.Current;
 
             if (activity != null)

@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Boost.Proto.Actor.Abstractions;
 using OpenTelemetry.Trace;
 using Proto.Cluster;
 
@@ -38,8 +39,8 @@ namespace Boost.Proto.Actor.Opentelemetry
         {
             var actorType = context.Actor.GetType().Name;
 
-            Self = context.ClusterIdentity()?.ToDiagnosticString() ??
-                   context.Self.ToString();
+            Context = context;
+            //Self = context.Self.ToString();
 
             _sendActivitySetup = (activity, message) =>
             {
@@ -56,6 +57,8 @@ namespace Boost.Proto.Actor.Opentelemetry
                 receiveActivitySetup(activity, message);
             };
         }
+
+        public IContext Context { get; set; }
 
         public override PID SpawnNamed(Props props, string name, Action<IContext>? callback = null)
         {
@@ -94,7 +97,7 @@ namespace Boost.Proto.Actor.Opentelemetry
         }
 
         public override Task Receive(MessageEnvelope envelope)
-            => OpenTelemetryMethodsDecorators.Receive(Self, envelope, _receiveActivitySetup, () => base.Receive(envelope));
+            => OpenTelemetryMethodsDecorators.Receive(Context, envelope, _receiveActivitySetup, () => base.Receive(envelope));
     }
 
     internal static class OpenTelemetryMethodsDecorators
@@ -207,11 +210,12 @@ namespace Boost.Proto.Actor.Opentelemetry
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static async Task Receive(string self, MessageEnvelope envelope, ActivitySetup receiveActivitySetup, Func<Task> receive)
+        internal static async Task Receive(IContext context, MessageEnvelope envelope, ActivitySetup receiveActivitySetup, Func<Task> receive)
         {
             var message = envelope.Message;
+            var self = context.Self.ToString();
 
-            if (message is InfrastructureMessage)
+            if (message is IIgnoredTraceMessage)
             {
                 await receive().ConfigureAwait(false);
                 return;
@@ -219,13 +223,12 @@ namespace Boost.Proto.Actor.Opentelemetry
 
             var propagationContext = envelope.Header.ExtractPropagationContext();
 
-            Console.WriteLine($"7:{propagationContext.ActivityContext.TraceId}");
-
             var names = self.Split('/');
             var name = names.Length > 2 ? $"{names[0]}/.../{Truncate(names[^1], 10)}" : self;
 
-            using var activity =
-                OpenTelemetryHelpers.BuildStartedActivity(propagationContext.ActivityContext, $"{name}@", message, receiveActivitySetup);
+            using var activity = OpenTelemetryHelpers.BuildStartedActivity(propagationContext.ActivityContext, $"{name}@", message, receiveActivitySetup);
+
+            Console.WriteLine($"7:{Activity.Current?.TraceId}-{message.GetType()}->{context.Actor.GetType()}:{envelope.Sender?.ToString()}->{self}");
 
             try
             {
