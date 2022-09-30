@@ -11,7 +11,7 @@
     <PackageReference Include="Boost.Proto.Actor.Hosting.Logging" Version="1.0.0-rc2.31.550" />
     <PackageReference Include="LanguageExt.Core" Version="4.3.2-beta" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    <PackageReference Include="OpenTelemetry.Api" Version="1.4.0-alpha.2" />
+    <PackageReference Include="OpenTelemetry.Api" Version="1.4.0-beta.1" />
   </ItemGroup>
 
   <ItemGroup>
