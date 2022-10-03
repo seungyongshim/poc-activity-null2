@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Boost.Proto.Actor.Decorators" Version="1.0.0-rc2.31.550" />
     <PackageReference Include="Proto.Cluster" Version="1.0.0-rc2.31" />
-    <PackageReference Include="Proto.Cluster.Consul" Version="1.0.0-rc2.31" />
+    <PackageReference Include="Proto.Cluster.Consul" Version="1.0.0-rc3.5" />
     <PackageReference Include="Proto.Cluster.Kubernetes" Version="1.0.0-rc2.31" />
     <PackageReference Include="Proto.Cluster.TestProvider" Version="1.0.0-rc2.31" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
