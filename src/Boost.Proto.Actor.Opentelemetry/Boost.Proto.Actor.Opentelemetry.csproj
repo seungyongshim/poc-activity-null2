@@ -9,7 +9,7 @@
     <PackageReference Include="Proto.Cluster" Version="1.0.0-rc2.31" />
     <PackageReference Include="OpenTelemetry" Version="1.4.0-alpha.2" />
     <PackageReference Include="OpenTelemetry.Api" Version="1.4.0-alpha.2" />
-    <PackageReference Include="Proto.Actor" Version="1.0.0-rc2.31" />
+    <PackageReference Include="Proto.Actor" Version="1.0.0-rc4.9" />
     <PackageReference Include="Roslynator.Analyzers" Version="4.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
